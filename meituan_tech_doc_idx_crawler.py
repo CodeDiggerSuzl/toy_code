@@ -56,4 +56,5 @@ if __name__ == '__main__':
         total_list.append(Info(name, date, tag_list, link, desc))
 
     for i in range(len(total_list)):
-        print("序号：%s   值：%s" % (i + 1, total_list[i]))
+        print(total_list[i].link)
+        # print("序号：%s   值：%s" % (i + 1, total_list[i]))
