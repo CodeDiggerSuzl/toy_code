@@ -1,4 +1,5 @@
 from time import sleep
+
 import requests
 
 """
@@ -16,12 +17,12 @@ headers = {
 }
 
 with open('repos.txt', 'r', encoding='utf-8') as f:  # 此处修改为 repos.txt 的地址
-    data = f.readlines()
+    repo_list = f.readlines()
 
 url = "https://api.github.com/repos/{}/{}"
 url_list = []
-for line in data:
-    name, repo = line.strip().split("/")
+for repo in repo_list:
+    name, repo = repo.strip().split("/")
     url_list.append(url.format(name, repo))
 
 for url in url_list:
