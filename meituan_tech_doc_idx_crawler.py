@@ -1,16 +1,16 @@
+from time import sleep
+
 import requests
 from bs4 import BeautifulSoup
 
 """
 第一版 后续改进
 """
-url = "https://tech.meituan.com//page/2.html"
-start_url = "https://tech.meituan.com/"
-resp = requests.get(start_url)
+url_template = "https://tech.meituan.com//page/{}.html"
+base_url = "https://tech.meituan.com/"
 
-html_raw_doc = resp.content.decode('utf-8')
-
-soup = BeautifulSoup(html_raw_doc, 'html.parser')
+start_page_num = 1
+end_page_num = 26
 
 
 class Info(object):
@@ -31,30 +31,35 @@ class Tag(object):
         self.link = link
 
 
+def parse_one_page(page_num):
+    sleep(1)
+    url = url_template.format(page_num)
+    if page_num == 1:
+        url = base_url
+    resp_text = requests.get(url).content.decode('utf-8')
+    parse_result = BeautifulSoup(resp_text, 'html.parser')
+    html_obj = parse_result.findAll("div", {"class": "post-container"})
+    return html_obj
+
+
 if __name__ == '__main__':
     total_list = []
-    result = soup.findAll("div", {"class": "post-container"})
-    for child in result:
-        print(child.text)
-        if child.text == "浏览更多文章":
-            continue
-        zero = child.contents[0]
-        name = zero.text
-        # print(name)
-        link = zero.contents[0].attrs['href']
-        # print(link)
-        date = child.contents[1].next.contents[1]
-        # print(date)
-        desc = child.contents[2].text
-        # print(desc)
-        tag_list = []
-        for c in child.contents[3].contents[0].contents:
-            if len(c.text) > 2:
-                t = Tag(c.text, c.attrs['href'])
-                tag_list.append(t)
-        print(tag_list)
-        total_list.append(Info(name, date, tag_list, link, desc))
+    for i in range(start_page_num, end_page_num):
+        result = parse_one_page(i)
+        for child in result:
+            if start_page_num == i and child.text == "浏览更多文章":
+                continue
+            zero = child.contents[0]
+            name = zero.text
+            link = zero.contents[0].attrs['href']
+            date = child.contents[1].next.contents[1]
+            desc = child.contents[2].text
+            tag_list = []
+            for c in child.contents[3].contents[0].contents:
+                if len(c.text) > 2:
+                    t = Tag(c.text, c.attrs['href'])
+                    tag_list.append(t)
+            total_list.append(Info(name, date, tag_list, link, desc))
 
-    for i in range(len(total_list)):
-        print(total_list[i].link)
-        # print("序号：%s   值：%s" % (i + 1, total_list[i]))
+    # for i in range(len(total_list)):
+    #     print(len(total_list))
