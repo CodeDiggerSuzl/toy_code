@@ -14,9 +14,9 @@ end_page_num = 26
 
 
 class Info(object):
-    def __init__(self, name, date, tags, url_link, short_desc):
-        self.name = name
-        self.date = date
+    def __init__(self, info_name, info_date, tags, url_link, short_desc):
+        self.name = info_name
+        self.date = info_date
         self.tags = tags
         self.link = url_link
         self.short_desc = short_desc
@@ -26,9 +26,9 @@ class Info(object):
 
 
 class Tag(object):
-    def __init__(self, name, link):
-        self.name = name
-        self.link = link
+    def __init__(self, tag_name, tag_link):
+        self.name = tag_name
+        self.link = tag_link
 
 
 def parse_one_page(page_num):
